@@ -22,14 +22,15 @@ def test_merge_preserves_inputs(axis):
         summaries.append(summary)
 
     before = deepcopy(summaries)
-    merged = detcontscores.det_cont_fct_merge(*summaries)
+    first, second = summaries
+    merged = detcontscores.det_cont_fct_merge(first, second)
     for summary, original in zip(summaries, before):
         for key in original:
             np.testing.assert_equal(summary[key], original[key])
 
     # The same partial summaries may be reused for another aggregate.
-    repeated = detcontscores.det_cont_fct_merge(*summaries)
-    reverse = detcontscores.det_cont_fct_merge(*summaries[::-1])
+    repeated = detcontscores.det_cont_fct_merge(first, second)
+    reverse = detcontscores.det_cont_fct_merge(second, first)
     for key, value in expected.items():
         if isinstance(value, np.ndarray):
             for result in (merged, repeated, reverse):
